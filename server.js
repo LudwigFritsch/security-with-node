@@ -1,5 +1,6 @@
-const https = require("http");
+const fs = require("fs");
 const path = require("path");
+const https = require("https");
 const express = require("express");
 
 const PORT = process.env.PORT || 8000;
@@ -14,11 +15,14 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-const server = https.createServer({
-  key: "",
-  cert: "",
-});
+const server = https.createServer(
+  {
+    key: fs.readFileSync("key.pem"),
+    cert: fs.readFileSync("cert.pem"),
+  },
+  app
+);
 
 server.listen(PORT, () => {
-  console.log(`server listening on port $${PORT}`);
+  console.log(`server listening on port ${PORT}`);
 });
