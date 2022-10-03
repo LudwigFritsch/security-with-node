@@ -1,5 +1,4 @@
-# private key
-key.pem
+*.pem
 
 # Logs
 logs
