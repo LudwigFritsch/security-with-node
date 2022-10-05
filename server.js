@@ -3,6 +3,8 @@ const path = require("path");
 const https = require("https");
 const helmet = require("helmet");
 const express = require("express");
+const passport = require("passport");
+const { Strategy } = require("passport-google-oauth2");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 8000;
@@ -12,17 +14,24 @@ const config = {
   CLIENT_SECRET: process.env.CLIENT_SECRET,
 };
 
-const app = express();
+const AUTH_OPTIONS = {
+  callbackURL: "/auth/google/callback",
+  clientID: config.CLIENT_ID,
+  clientSecret: config.CLIENT_SECRET,
+};
 
-function checkLoggedIn(req, res, next) {
-  const isLoggedIn = true; // TODO
-  if (!isLoggedIn) {
-    return res.status(401).json({ error: "You must log in" });
-  }
-  next();
+function verifyCallback(accessToken, refreshToken, profile, done) {
+  console.log("Google profile", profile);
+  done(null, profile);
 }
 
+passport.use(new Strategy(AUTH_OPTIONS, verifyCallback));
+
+const app = express();
+
 app.use(helmet());
+
+app.use(passport.initialize());
 
 app.use(express.static(__dirname + "/public"));
 
@@ -51,3 +60,11 @@ const server = https.createServer(
 server.listen(PORT, () => {
   console.log(`server listening on port ${PORT}`);
 });
+
+function checkLoggedIn(req, res, next) {
+  const isLoggedIn = true; // TODO
+  if (!isLoggedIn) {
+    return res.status(401).json({ error: "You must log in" });
+  }
+  next();
+}
