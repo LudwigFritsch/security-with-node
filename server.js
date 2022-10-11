@@ -4,6 +4,7 @@ const https = require("https");
 const helmet = require("helmet");
 const express = require("express");
 const passport = require("passport");
+const cookieSession = require("cookie-session");
 const { Strategy } = require("passport-google-oauth2");
 require("dotenv").config();
 
@@ -26,6 +27,13 @@ const app = express();
 
 app.use(helmet());
 
+app.use(
+  cookieSession({
+    name: "session",
+    maxAge: 60 * 60 * 1000,
+    keys: [process.env.COOKIE_KEY_ONE, process.env.COOKIE_KEY_TWO],
+  })
+);
 app.use(passport.initialize());
 
 app.use(express.static(__dirname + "/public"));
