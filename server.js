@@ -27,7 +27,7 @@ passport.use(new Strategy(AUTH_OPTIONS, verifyCallback));
  * save session to cookie
  */
 passport.serializeUser((user, done) => {
-  done(null, user);
+  done(null, user.id);
 });
 
 /**
