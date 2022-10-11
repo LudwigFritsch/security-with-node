@@ -17,7 +17,6 @@ const AUTH_OPTIONS = {
 };
 
 function verifyCallback(accessToken, refreshToken, profile, done) {
-  console.log("Google profile", profile);
   done(null, profile);
 }
 
@@ -63,9 +62,7 @@ app.get(
     successRedirect: "/",
     session: true,
   }),
-  (req, res) => {
-    console.log("Google called us back");
-  }
+  (req, res) => {}
 );
 
 app.get("/auth/logout", (req, res) => {});
@@ -95,7 +92,7 @@ server.listen(PORT, () => {
 });
 
 function checkLoggedIn(req, res, next) {
-  const isLoggedIn = true; // TODO
+  const isLoggedIn = req.isAuthenticated() && req.user;
   if (!isLoggedIn) {
     return res.status(401).json({ error: "You must log in" });
   }
